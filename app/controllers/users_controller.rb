@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_filter :skip_first_page, :only => :new
+  before_filter :skip_first_page, only: :new
 
   def new
     @bodyId = 'home'
@@ -14,7 +14,7 @@ class UsersController < ApplicationController
 
   def create
     # Get user to see if they have already signed up
-    @user = User.find_by_email(params[:user][:email]);
+    @user = User.find_by_email(params[:user][:email])
 
     # If user doesnt exist, make them, and attach referrer
     if @user.nil?
@@ -23,8 +23,8 @@ class UsersController < ApplicationController
 
       if !cur_ip
         cur_ip = IpAddress.create(
-          :address => request.env['HTTP_X_FORWARDED_FOR'],
-          :count => 0
+          address: request.env['HTTP_X_FORWARDED_FOR'],
+          count: 0
         )
       end
 
@@ -35,7 +35,7 @@ class UsersController < ApplicationController
         cur_ip.save
       end
 
-      @user = User.new(:email => params[:user][:email])
+      @user = User.new(email: params[:user][:email])
 
       @referred_by = User.find_by_referral_code(cookies[:h_ref])
 
@@ -45,9 +45,7 @@ class UsersController < ApplicationController
       puts request.env['HTTP_X_FORWARDED_FOR'].inspect
       puts '------------'
 
-      if !@referred_by.nil?
-        @user.referrer = @referred_by
-      end
+      @user.referrer = @referred_by if !@referred_by.nil?
 
       @user.save
     end
@@ -55,27 +53,24 @@ class UsersController < ApplicationController
     # Send them over refer action
     respond_to do |format|
       if !@user.nil?
-        cookies[:h_email] = { :value => @user.email }
+        cookies[:h_email] = { value: @user.email }
         format.html { redirect_to '/refer-a-friend' }
       else
-        format.html { redirect_to root_path, :alert => "Something went wrong!" }
+        format.html { redirect_to root_path, alert: 'Something went wrong!' }
       end
     end
   end
 
   def refer
-    email = cookies[:h_email]
-
     @bodyId = 'refer'
     @is_mobile = mobile_device?
-
-    @user = User.find_by_email(email)
+    @user = User.find_by_email(cookies[:h_email])
 
     respond_to do |format|
       if !@user.nil?
-        format.html #refer.html.erb
+        format.html # refer.html.erb
       else
-        format.html { redirect_to root_path, :alert => "Something went wrong!" }
+        format.html { redirect_to root_path, alert: 'Something went wrong!' }
       end
     end
   end
@@ -84,7 +79,7 @@ class UsersController < ApplicationController
   end
 
   def redirect
-    redirect_to root_path, :status => 404
+    redirect_to root_path, status: 404
   end
 
   private

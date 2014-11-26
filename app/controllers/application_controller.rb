@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
 
   def mobile_device?
     if session[:mobile_param]
-      session[:mobile_param] == "1"
+      session[:mobile_param] == '1'
     else
       request.user_agent =~ /Mobile|webOS/
     end
@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
         cookies[:h_ref] = { :value => params[:ref], :expires => 1.week.from_now }
       end
 
-      if request.env["HTTP_USER_AGENT"] and !request.env["HTTP_USER_AGENT"].include?("facebookexternalhit/1.1")
+      if request.env['HTTP_USER_AGENT'] and !request.env['HTTP_USER_AGENT'].include?('facebookexternalhit/1.1')
         redirect_to proc { url_for(params.except(:ref)) }
       end
     end
